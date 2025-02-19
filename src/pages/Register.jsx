@@ -1,46 +1,35 @@
 import { useState } from "react";
+import { Container, TextField, Button, Typography, Box } from "@mui/material";
+import { Link, useNavigate } from "react-router-dom";
+import "../App.css";
 
 const Register = () => {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
-  const handleRegister = async (e) => {
+  const handleRegister = (e) => {
     e.preventDefault();
-    setError("");
-
-    try {
-      const response = await fetch("http://localhost:5000/api/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Registration failed");
-      }
-
-      alert("Registration successful! Please log in.");
-      window.location.href = "/login"; // Redirect to Login page
-    } catch (err) {
-      setError(err.message);
-    }
+    localStorage.setItem("auth", "true");
+    navigate("/dashboard");
   };
 
   return (
-    <div>
-      <h2>Register</h2>
-      <form onSubmit={handleRegister}>
-        <input type="email" placeholder="Email" onChange={(e) => setEmail(e.target.value)} required />
-        <input type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} required />
-        <button type="submit">Register</button>
-      </form>
-      {error && <p style={{ color: "red" }}>{error}</p>}
-    </div>
+    <Container maxWidth="sm">
+      <Box className="auth-container">
+        <Typography variant="h4" align="center">Sign Up</Typography>
+        <form onSubmit={handleRegister}>
+          <TextField fullWidth margin="normal" label="Name" required value={name} onChange={(e) => setName(e.target.value)} />
+          <TextField fullWidth margin="normal" label="Email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+          <TextField fullWidth margin="normal" label="Password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} />
+          <Button type="submit" variant="contained" color="primary" fullWidth>Sign Up</Button>
+          <Typography align="center">
+            Already have an account? <Link to="/">Login</Link>
+          </Typography>
+        </form>
+      </Box>
+    </Container>
   );
 };
 
